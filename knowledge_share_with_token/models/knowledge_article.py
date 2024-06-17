@@ -2,12 +2,14 @@ import uuid
 from werkzeug.urls import url_join
 from odoo import fields, models, api, _
 from odoo.tools import consteq
+from odoo.http import request
+from odoo.osv import expression
 
 
 class KnowledgeArticle(models.Model):
     _inherit = 'knowledge.article'
 
-    share_with_token =  fields.Boolean(
+    share_with_token = fields.Boolean(
         string="Share with token"
     )
 
@@ -15,12 +17,14 @@ class KnowledgeArticle(models.Model):
         string='Access Token',
         compute='_compute_token',
         store=True,
+        index=True,
         copy=False
     )
 
     token_article_url = fields.Char(
         string='Article URL',
         compute='_compute_token',
+        store=True,
         readonly=True
     )
 
@@ -38,11 +42,22 @@ class KnowledgeArticle(models.Model):
         except:
             return False
 
-    def _get_documents_and_check_access(self, access_token):
+    def _get_articles_and_check_access(self, access_token):
         self.ensure_one()
         if not self._check_token(access_token):
             return False
         return self
+
+    @api.model
+    def search(self, domain, offset=0, limit=None, order=None, count=False):
+        if not self.env.su and request.session and request.session.data:
+            access_token = request.session.data.get("knowledge_access_token")
+            if access_token:
+                # providing an access_token is like giving access to articles
+                domain = expression.AND([domain, [('access_token', '=', access_token)]])
+                result = super(KnowledgeArticle, self).sudo().search(domain, offset, limit, order, count)
+                return result
+        return super(KnowledgeArticle, self).search(domain, offset, limit, order, count)
 
     @api.depends('share_with_token')
     def _compute_token(self):
@@ -57,3 +72,7 @@ class KnowledgeArticle(models.Model):
                     article.access_token = str(uuid.uuid4())
                 article.token_article_url = url_join(article.get_base_url(), 'knowledge/article/%s/%s' % (article.id, article.access_token))
 
+    @api.onchange('share_with_token')
+    def _onchange_share_with_token(self):
+        if self.share_with_token:
+            self.website_published = False
