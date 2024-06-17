@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 MainFrame Monkey <https://www.mainframemonkey.com>
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
 from odoo.tests import common, tagged
 from odoo.addons.knowledge_share_underlying.tests.test_share_underlying import TestShareUnderlying
 

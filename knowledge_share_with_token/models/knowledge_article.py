@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 MainFrame Monkey <https://www.mainframemonkey.com>
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
 import uuid
 from werkzeug.urls import url_join
 from odoo import fields, models, api, _

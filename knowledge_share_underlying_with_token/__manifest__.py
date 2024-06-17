@@ -3,7 +3,7 @@
     "summary": "This modules allows sharing underlying articles with token for Knowledge.",
     "description": "This modules allows sharing underlying articles with token for Knowledge.",
     "author": "Alesis Manzano for Mainframe Monkey",
-    "website": "https://alesisjoan.github.io",
+    "website": "https://www.mainframemonkey.com",
     "category": "Productivity/Knowledge",
     "version": "16.0.1.0.0",
     "license": "LGPL-3",
